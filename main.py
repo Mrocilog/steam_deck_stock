@@ -4,7 +4,7 @@ from telegram import Bot
 
 # ===== AYARLAR =====
 CHECK_INTERVAL = 600
-TELEGRAM_TOKEN = "BURAYA_TOKEN"
+TELEGRAM_TOKEN = "8673271472:AAEr6mnjCIpJvENgO5NKbYFYykqSEbh7U8k"
 CHAT_ID = "7204352317"
 
 # Refurb modellerin AppID’leri (örnek – gerekirse güncelleriz)
