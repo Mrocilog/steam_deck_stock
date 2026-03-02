@@ -1,42 +1,54 @@
-import os
 import requests
 import time
 from bs4 import BeautifulSoup
 from telegram import Bot
 
+# ===== AYARLAR =====
 URL = "https://store.steampowered.com/sale/steamdeckrefurbished/?cc=NL"
 CHECK_INTERVAL = 600  # 10 dakika
+SOLD_OUT_THRESHOLD = 5  # Şu an 5 model var
 
-TELEGRAM_TOKEN = os.environ.get("8673271472:AAEr6mnjCIpJvENgO5NKbYFYykqSEbh7U8k")
-CHAT_ID = os.environ.get("7204352317")
+# TOKEN VE CHAT_ID (BURAYA KENDİ TOKENINI YAZ)
+TELEGRAM_TOKEN = "8673271472:AAEr6mnjCIpJvENgO5NKbYFYykqSEbh7U8k"
+CHAT_ID = "7204352317"
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
+print("Bot başlatıldı...")
+
 def check_stock():
-    headers = {"User-Agent": "Mozilla/5.0"}
-    r = requests.get(URL, headers=headers)
-    soup = BeautifulSoup(r.text, "html.parser")
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "en-US,en;q=0.9"
+    }
 
-    text = soup.get_text()
-    sold_out_count = text.count("Tükendi")
+    response = requests.get(URL, headers=headers, timeout=15)
+    soup = BeautifulSoup(response.text, "html.parser")
 
-    print("Tükendi sayısı:", sold_out_count)
+    text = soup.get_text().lower()
 
-    if sold_out_count < 5:
-        return True
-    return False
+    keywords = [
+        "tükendi",
+        "out of stock",
+        "uitverkocht"
+    ]
 
-def notify():
-    bot.send_message(
-        chat_id=CHAT_ID,
-        text="🚨 Refurbished Steam Deck stokta olabilir!\n" + URL
-    )
+    sold_out_count = sum(text.count(word) for word in keywords)
+
+    print("Toplam stokta yok sayısı:", sold_out_count)
+
+    return sold_out_count < SOLD_OUT_THRESHOLD
+
 
 while True:
     try:
         if check_stock():
-            notify()
-            time.sleep(3600)  # spam yapmasın diye 1 saat bekle
+            print("Stok bulundu! Bildirim gönderiliyor...")
+            bot.send_message(
+                chat_id=CHAT_ID,
+                text="🚨 Steam Deck Refurb stokta olabilir!\n" + URL
+            )
+            time.sleep(3600)  # 1 saat bekle (spam önleme)
         else:
             print("Stok yok.")
     except Exception as e:
