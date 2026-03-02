@@ -7,8 +7,8 @@ from telegram import Bot
 URL = "https://store.steampowered.com/sale/steamdeckrefurbished/?cc=NL"
 CHECK_INTERVAL = 600  # 10 dakika
 
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
-CHAT_ID = os.environ.get("CHAT_ID")
+TELEGRAM_TOKEN = os.environ.get("8673271472:AAEr6mnjCIpJvENgO5NKbYFYykqSEbh7U8k")
+CHAT_ID = os.environ.get("7204352317")
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
