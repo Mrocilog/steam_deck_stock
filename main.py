@@ -18,26 +18,18 @@ print("Bot başlatıldı...")
 
 def check_stock():
     headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Accept-Language": "en-US,en;q=0.9"
+        "User-Agent": "Mozilla/5.0"
     }
 
     response = requests.get(URL, headers=headers, timeout=15)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    text = soup.get_text().lower()
+    disabled_buttons = soup.find_all("a", class_="btn_disabled")
 
-    keywords = [
-        "tükendi",
-        "out of stock",
-        "uitverkocht"
-    ]
+    print("Disabled buton sayısı:", len(disabled_buttons))
 
-    sold_out_count = sum(text.count(word) for word in keywords)
-
-    print("Toplam stokta yok sayısı:", sold_out_count)
-
-    return sold_out_count < SOLD_OUT_THRESHOLD
+    # Eğer 5 modelin hepsi disabled ise stok yok
+    return len(disabled_buttons) < 5
 
 
 while True:
